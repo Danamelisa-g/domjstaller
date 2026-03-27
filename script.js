@@ -4,12 +4,23 @@ const tasklist = document.getElementById('task-list');
 //para crear un nuevo elemneto 
 function createTaskElement(taskText){
     const taskitem =document.createElement('li');
+
     taskitem.className='task-item';//agregar clase
     taskitem.textContent = taskText;//establecer el texto de la tarea
+    //agregar elemento de eliminar tarea
 
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'delete-btn';
+    deleteBtn.textContent = 'Eliminar';
 
-
-     tasklist.appendChild(taskitem);//agregar la terea a la lista
+    deleteBtn.addEventListener('click',() => {
+        taskitem.remove();
+        saveTasks();
+    })
+      
+    taskitem.appendChild(deleteBtn)
+    tasklist.appendChild(taskitem);//agregar la terea a la lista
+    saveTasks();
 }
 addTaskBtn.addEventListener('click',()=>{  
     const taskText =taskinput.value.trim();//obtener el texto en el input // elimina los espacios al inicio y al final
@@ -21,8 +32,27 @@ addTaskBtn.addEventListener('click',()=>{
 
    })
 function saveTasks(){
-    const taskitems= document.querySelectorAll('.task-item')
-}
+    const taskitems = document.querySelectorAll('.task-item');
+    const tasks = [];
 
+    taskitems.forEach(item => {
+        const text = item.textContent.replace('Eliminar', '').trim();
+        tasks.push(text);
+    });
+
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+}
+function loadTasks() {
+    const savedTasks = localStorage.getItem('tasks');
+
+    if (savedTasks) {
+        const tasksArray = JSON.parse(savedTasks);
+
+        tasksArray.forEach(task => {
+            createTaskElement(task);
+        });
+    }
+}
+loadTasks();
 
 
